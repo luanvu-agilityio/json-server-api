@@ -1,24 +1,26 @@
 const jsonServer = require('json-server');
+const cors = require('cors');
 const server = jsonServer.create();
-
-// Important: use static data instead of file
-const db = {
-  invoices: [],
-  products: [],
-};
-
-const router = jsonServer.router(db); // Use db object directly
+const router = jsonServer.router('db.json');
 const middlewares = jsonServer.defaults();
 
-// Handle CORS
-server.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
-});
+// Enable CORS for all origins
+server.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }),
+);
 
 server.use(middlewares);
 server.use(router);
+
+// Set port for Vercel
+const port = process.env.PORT || 3000;
+server.listen(port, () => {
+  console.log(`JSON Server is running on port ${port}`);
+});
 
 module.exports = server;

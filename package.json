@@ -11,6 +11,9 @@
   "type": "commonjs",
   "description": "",
   "devDependencies": {
-    "json-server": "^0.17.3"
+    "json-server": "^0.17.4"
+  },
+  "dependencies": {
+    "cors": "^2.8.5"
   }
 }
