@@ -1,7 +1,8 @@
+const path = require('path');
 const jsonServer = require('json-server');
 const cors = require('cors');
 const server = jsonServer.create();
-const router = jsonServer.router('db.json');
+const router = jsonServer.router(path.join(__dirname, 'db.json'));
 const middlewares = jsonServer.defaults();
 
 // Enable CORS for all origins
