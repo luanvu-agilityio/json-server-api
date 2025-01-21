@@ -8,8 +8,8 @@
   },
   "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "api/index.js",
+      "source": "/(.*)",
+      "destination": "api/index.js",
       "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
       "headers": {
         "Access-Control-Allow-Origin": "*",
