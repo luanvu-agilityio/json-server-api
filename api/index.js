@@ -4,7 +4,9 @@ const db = JSON.parse(fs.readFileSync(path.join('db.json')));
 
 const jsonServer = require('json-server');
 const server = jsonServer.create();
-const router = jsonServer.router(db);
+const router = jsonServer.router(db, {
+  preserveOrder: true,
+});
 const middlewares = jsonServer.defaults();
 
 // Enable CORS for all requests
