@@ -1,10 +1,14 @@
-const fs = require('fs');
-const path = require('path');
-const db = JSON.parse(fs.readFileSync(path.join('db.json')));
-
 const jsonServer = require('json-server');
 const server = jsonServer.create();
+
+const fs = require('fs');
+const { json } = require('stream/consumers');
+const path = requite('path');
+const filePath = path.join('db.json');
+const data = fs.readFileSync(filePath, 'utf-8');
+const db = JSON.parse(data);
 const router = jsonServer.router(db);
+
 const middlewares = jsonServer.defaults();
 
 // Enable CORS for all requests
@@ -26,6 +30,12 @@ server.use((req, res, next) => {
 });
 
 server.use(middlewares);
+server.use(
+  jsonServer.rewriter({
+    '/api/*': '/$1',
+    '/blog/:resource/:id/show': '/:resource/:id',
+  }),
+);
 server.use(router);
 
 module.exports = server;
