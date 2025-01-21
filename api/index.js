@@ -2,23 +2,24 @@ const jsonServer = require('json-server');
 const path = require('path');
 const server = jsonServer.create();
 const middlewares = jsonServer.defaults();
+const fs = require('fs');
+const { json } = require('stream/consumers');
 
-// Safely load the database
-let db;
-try {
-  // Try to load from the included db.json file
-  db = require(path.join(process.cwd(), 'db.json'));
-} catch (error) {
-  console.error('Error loading db.json:', error);
-  // Fallback to empty database if file cannot be loaded
-  db = {
-    invoices: [],
-    products: [],
-  };
-}
-
-// Create router with the database object directly
-const router = jsonServer.router(db);
+const getRouter = () => {
+  const dbPath = path.join(process.cwd(), 'db.json');
+  let db;
+  try {
+    const dbData = fs.readFileSync(dbPath, 'utf8');
+    db = JSON.parse(dbData);
+  } catch (error) {
+    console.error('Error loading db.json:', error);
+    db = {
+      invoices: [],
+      products: [],
+    };
+  }
+  return jsonServer.router(db);
+};
 
 // Enable CORS for all requests
 server.use((req, res, next) => {
@@ -37,16 +38,12 @@ server.use((req, res, next) => {
   next();
 });
 
-// Add request logging
-server.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  const currentDB = router.db.getState();
-  console.log('Current DB State:', JSON.stringify(currentDB, null, 2));
-  next();
-});
-
 server.use(middlewares);
-server.use(router);
+
+server.use((req, res, next) => {
+  const router = getRouter();
+  router(req, res, next);
+});
 
 // Error handling
 server.use((err, req, res, next) => {
