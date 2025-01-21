@@ -45,12 +45,6 @@ server.use((req, res, next) => {
   next();
 });
 
-// Add middleware to clone the db state for each request
-server.use((req, res, next) => {
-  router.db.setState({ ...db });
-  next();
-});
-
 server.use(middlewares);
 server.use(router);
 
